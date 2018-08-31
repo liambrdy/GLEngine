@@ -10,9 +10,13 @@ import models.TexturedModel;
 
 public class Renderer {
 	
+	public static final float R = (float) 0.5;
+	public static final float G = (float) 0.0;
+	public static final float B = (float) 0.4;
+	
 	public void prepare() {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-		GL11.glClearColor(1, 0, 0, 1);
+		GL11.glClearColor(R, G, B, 1);
 	}
 	
 	public void render(TexturedModel texturedModel) {
