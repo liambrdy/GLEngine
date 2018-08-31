@@ -3,7 +3,7 @@ This game engine is built using OpenGL and java.
 
 ## Dependencies
 - [LWJGL 2](http://legacy.lwjgl.org/) (The [third version](https://www.lwjgl.org/) is out, but I stil preffer 2).
-- [Slick Util](http://slick.ninjacave.com/slick-util/]
+- [Slick Util](http://slick.ninjacave.com/slick-util/)
 
 ## Installation
 - Download [Java](https://www.java.com/en/download/)
