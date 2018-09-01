@@ -10,9 +10,8 @@ import models.RawModel;
 import models.TexturedModel;
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
+import renderEngine.MasterRenderer;
 import renderEngine.OBJLoader;
-import renderEngine.Renderer;
-import shaders.StaticShader;
 import textures.ModelTexture;
 
 public class MainGameLoop {
@@ -21,8 +20,6 @@ public class MainGameLoop {
 
 		DisplayManager.createDisplay();
 		Loader loader = new Loader();
-		StaticShader shader = new StaticShader();
-		Renderer renderer = new Renderer(shader);
 		
 		RawModel model = OBJLoader.loadObjModel("ring", loader);
 				
@@ -37,19 +34,14 @@ public class MainGameLoop {
 		
 		Camera camera = new Camera();
 		 
+		MasterRenderer renderer = new MasterRenderer();
 		while(!Display.isCloseRequested()) {
-			entity.increaseRotation(0, 0, 0);
 			camera.move();
-			renderer.prepare();
-			shader.start();
-			shader.loadLight(light);
-			shader.loadViewMatrix(camera);
-			renderer.render(entity, shader);
-			shader.stop();
+			renderer.processEntity(entity);
+			renderer.render(light, camera);
 			DisplayManager.updateDisplay();		
 		}
-
-		shader.cleanUp();
+		renderer.cleanUp();
 		loader.cleanUp();
 		DisplayManager.closeDisplay();
 
