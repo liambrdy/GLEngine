@@ -11,7 +11,7 @@ This game engine is built using OpenGL and java.
 - `git clone https://github.com/BramDaily/OpenGLGameEngine.git`
 
 ## Screenshots
-![alt text](screenshots/lights.png "Using lights to illuminate a model")
+![alt text](screenshots/simpleTerrain.png "Generating a flat terrain")
 
 ## Credits
 This engine was built vaguely around the OpenGL tutorial by ThinMatrix. It was really helpfull and if you want to learn how to use LWJGL and OpenGL, go to his youtube [channel](https://www.youtube.com/user/ThinMatrix).
