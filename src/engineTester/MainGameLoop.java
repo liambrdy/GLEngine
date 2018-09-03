@@ -30,13 +30,12 @@ public class MainGameLoop {
 		Loader loader = new Loader();
 		
 		List<Entity> entities = new ArrayList<Entity>();
-		List<Terrain> terrains = new ArrayList<Terrain>();
 		
 		// *********MODEL LOADING STUFF ************
-			ModelData playerData = OBJFileLoader.loadOBJ("player");
-			RawModel playerModel = loader.loadToVAO(playerData.getVertices(), playerData.getTextureCoords(), playerData.getNormals(), playerData.getIndices());
-			ModelTexture playerTexture = new ModelTexture(loader.loadTexture("textures/playerTexture"));
-			Player player = new Player(new TexturedModel(playerModel, playerTexture), new Vector3f(0, 0, 0), 0, 180, 0, 1);
+		ModelData playerData = OBJFileLoader.loadOBJ("player");
+		RawModel playerModel = loader.loadToVAO(playerData.getVertices(), playerData.getTextureCoords(), playerData.getNormals(), playerData.getIndices());
+		ModelTexture playerTexture = new ModelTexture(loader.loadTexture("textures/playerTexture"));
+		Player player = new Player(new TexturedModel(playerModel, playerTexture), new Vector3f(0, 0, 0), 0, 20, 0, 1);
 		// *****************************************
 		
 		// *********TERRAIN TEXTURE STUFF***********
@@ -48,9 +47,6 @@ public class MainGameLoop {
 		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
 		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMaps/blendMap"));
 		Terrain terrain1 = new Terrain(0,0,loader, texturePack, blendMap, "heightMaps/heightmap");
-		Terrain terrain2 = new Terrain(1,0,loader,texturePack, blendMap, "heightMaps/heightmap");
-		terrains.add(terrain1);
-		terrains.add(terrain2);
 		// *****************************************
 
 		Light light = new Light(new Vector3f(20000, 20000, 2000), new Vector3f(1,1,1));		
@@ -59,11 +55,10 @@ public class MainGameLoop {
 		MasterRenderer renderer = new MasterRenderer();
 		while(!Display.isCloseRequested()) {
 			camera.move();
-			player.move();
+			player.move(terrain1);
 			renderer.processEntity(player);
 			
-			for (Terrain terrain : terrains) 
-				renderer.processTerrain(terrain);
+			renderer.processTerrain(terrain1);
 			
 			for (Entity entity : entities)
 				renderer.processEntity(entity);
