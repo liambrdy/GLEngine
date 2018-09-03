@@ -14,7 +14,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class OBJLoader {
 
-	public static RawModel loadObjModel(String fileName, Loader loader) {
+	public static RawModel loadObjModel(String fileName, Loader loader){
 		FileReader fr = null;
 		try {
 			fr = new FileReader(new File("res/"+fileName+".obj"));
@@ -34,27 +34,30 @@ public class OBJLoader {
 		int[] indicesArray = null;
 		try {
 		
-			while (true) {
+			while (true){
 				line = reader.readLine();
 				String[] currentLine = line.split(" ");
-				if (line.startsWith("v ")) {
-					Vector3f vertex = new Vector3f(Float.parseFloat(currentLine[1]), Float.parseFloat(currentLine[2]), Float.parseFloat(currentLine[3]));
+				if (line.startsWith("v ")){
+					Vector3f vertex = new Vector3f(Float.parseFloat(currentLine[1]),
+							Float.parseFloat(currentLine[2]), Float.parseFloat(currentLine[3]));
 					vertices.add(vertex);
-				}else if (line.startsWith("vt ")) {
-					Vector2f texture = new Vector2f(Float.parseFloat(currentLine[1]), Float.parseFloat(currentLine[2]));
+				}else if (line.startsWith("vt ")){
+					Vector2f texture = new Vector2f(Float.parseFloat(currentLine[1]), 
+						Float.parseFloat(currentLine[2]));
 					textures.add(texture);
-				}else if (line.startsWith("vn ")) {
-					Vector3f normal = new Vector3f(Float.parseFloat(currentLine[1]), Float.parseFloat(currentLine[2]), Float.parseFloat(currentLine[3]));
+				}else if (line.startsWith("vn ")){
+					Vector3f normal = new Vector3f(Float.parseFloat(currentLine[1]),
+							Float.parseFloat(currentLine[2]), Float.parseFloat(currentLine[3]));
 					normals.add(normal);
-				}else if (line.startsWith("f ")) {
+				}else if (line.startsWith("f ")){
 					textureArray = new float[vertices.size()*2];
 					normalsArray = new float[vertices.size()*3];
 					break;
 				}
 			}
 			
-			while(line != null) {
-				if (!line .startsWith("f ")) {
+			while(line != null){
+				if (!line .startsWith("f ")){
 					line = reader.readLine();
 					continue;
 				}
