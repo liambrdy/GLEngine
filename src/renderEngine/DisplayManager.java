@@ -15,7 +15,7 @@ public class DisplayManager {
 	private static final int HEIGHT = 720;
 	private static final int FPS_CAP = 120;
 	
-	private static final String TITLE = "3D Game Engine - ThinMatrix tutorial";
+	private static final String TITLE = "OpenGL Game Engine";
 
 	private static long lastFrameTime;
 	private static float delta;
