@@ -28,7 +28,7 @@ public class EntityRenderer {
 		shader.stop();
 	}
 	
-	public void render(Map<TexturedModel, List<Entity>> entities){
+	public void render(Map<TexturedModel, List<Entity>> entities){ 
 		for(TexturedModel model:entities.keySet()){
 			prepareTexturedModel(model);
 			List<Entity> batch = entities.get(model);
@@ -47,10 +47,10 @@ public class EntityRenderer {
 		GL20.glEnableVertexAttribArray(1); // textureCoordinates
 		GL20.glEnableVertexAttribArray(2); // normal
 		ModelTexture texture = model.getTexture();
-		shader.loadNumberOfRows(texture.getNumberOfRows());
 		if(texture.isHasTransparency()){
 			MasterRenderer.disableCulling();			
 		}
+		shader.loadNumberOfRows(texture.getNumberOfRows());
 		shader.loadFakeLightingVariable(texture.isUseFakeLighting());
 		shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity() );
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);

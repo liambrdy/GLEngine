@@ -1,4 +1,4 @@
-package entities;
+ package entities;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
@@ -9,11 +9,12 @@ import terrains.Terrain;
 
 public class Player extends Entity {
 
-	private static final float RUN_SPEED = 50;   // units per second
-	private static final float TURN_SPEED = 100; // degrees per second
-	private static final float GRAVITY = -50;
-	private static final float JUMP_POWER = 30;
-		
+	private static final float RUN_SPEED = 250;   // units per second
+	private static final float TURN_SPEED = 200; // degrees per second
+	private static final float GRAVITY = -150;
+	private static final float JUMP_POWER = 130;
+	 
+	
 	private float currentSpeed = 0;
 	private float currentTurnSpeed = 0;
 	private float upwardsSpeed = 0;
@@ -22,10 +23,9 @@ public class Player extends Entity {
 	
 	public Player(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
 		super(model, position, rotX, rotY, rotZ, scale);
-		// TODO Auto-generated constructor stub
 	}
 
-	public void move(Terrain terrain) {
+	public void move(Terrain terrain){
 		checkInputs();
 		super.increaseRotation(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0);
 		float distance = currentSpeed * DisplayManager.getFrameTimeSeconds();
@@ -40,6 +40,9 @@ public class Player extends Entity {
 			super.getPosition().y = terrainHeight;
 			isAirborn = false;
 		}
+		
+		//System.out.println(getPosition().x + "," + getPosition().y + "," + getPosition().z);  
+		
 	}
 	
 	private void jump()

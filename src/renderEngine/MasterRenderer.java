@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL21;
 import org.lwjgl.util.vector.Matrix4f;
 
 import entities.Camera;
@@ -15,16 +17,17 @@ import entities.Light;
 import models.TexturedModel;
 import shaders.StaticShader;
 import shaders.TerrainShader;
-import terrains.Terrain;
+import skybox.SkyboxRenderer;
+import terrains.Terrain; 
 
 public class MasterRenderer {
 	private static final float FOV = 70; // field of view angle
 	private static final float NEAR_PLANE = 0.1f;
-	private static final float FAR_PLANE = 1000;
+	private static final float FAR_PLANE = 10000;
 	
-	private static final float RED = 154/255f;
-	private static final float GREEN = 198/255f;
-	private static final float BLUE = 194/255f;
+	private static final float RED = 0.5444f;
+	private static final float GREEN = 0.62f;
+	private static final float BLUE = 0.69f;
 
 	private Matrix4f projectionMatrix;
 	
@@ -38,12 +41,15 @@ public class MasterRenderer {
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
 	private List<Terrain> terrains = new ArrayList<Terrain>();
 	
-	public MasterRenderer()
+	private SkyboxRenderer skyboxRenderer;
+	
+	public MasterRenderer(Loader loader)
 	{
 		enableCulling();
 		createProjectionMatrix();
 		renderer = new EntityRenderer(shader, projectionMatrix);
 		terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
+		skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
 	}
 	
 	public static void enableCulling(){
@@ -55,28 +61,32 @@ public class MasterRenderer {
 		GL11.glDisable(GL11.GL_CULL_FACE);
 	}
 	
-	public void render(Light sun, Camera camera){
+	public void render(List<Light> lights, Camera camera){
 		prepare();
 
 		shader.start();
 		shader.loadSkyColor(RED, GREEN, BLUE);
-		shader.loadLight(sun);
+		shader.loadLights(lights);
 		shader.loadViewMatrix(camera);
 		renderer.render(entities);
 		shader.stop();
 		
 		terrainShader.start();
 		terrainShader.loadSkyColor(RED, GREEN, BLUE);
-		terrainShader.loadLight(sun);
+		terrainShader.loadLights(lights);
 		terrainShader.loadViewMatrix(camera);
 		terrainRenderer.render(terrains);
 		terrainShader.stop();
+		GL11.glDepthRange(0.9999, 1);
+		skyboxRenderer.render(camera);
+		GL11.glDepthRange(0, 1);
+		
 		terrains.clear();
 		entities.clear();
 	}
 	
-	public void processTerrain(Terrain terrain)  {
-		terrains.add(terrain);
+	public void processTerrain(Terrain terrain){
+		terrains.add(terrain); 
 	}
 	public void processEntity(Entity entity){
 		TexturedModel entityModel = entity.getModel();
@@ -90,7 +100,7 @@ public class MasterRenderer {
 		}
 	}
 	
-	public void cleanUp() {
+	public void cleanUp(){
 		shader.cleanUp();
 		terrainShader.cleanUp();
 	}
@@ -99,9 +109,11 @@ public class MasterRenderer {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT|GL11.GL_DEPTH_BUFFER_BIT);
 		GL11.glClearColor(RED, GREEN, BLUE, 1);
+		GL11.glDepthRange(0, 1);
 	}
 	
-	private void createProjectionMatrix() {
+	private void createProjectionMatrix()
+	{
 		float aspectRatio = (float) Display.getWidth()/(float) Display.getHeight();
 		float y_scale = (float) ((1f / Math.tan(Math.toRadians(FOV /2f))) * aspectRatio);
 		float x_scale = y_scale / aspectRatio;

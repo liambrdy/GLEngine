@@ -51,35 +51,33 @@ public class Camera {
 		float offsetZ = (float) (horizontalDistance * Math.cos(Math.toRadians(theta)));
 		position.x = player.getPosition().x - offsetX;
 		position.z = player.getPosition().z - offsetZ;
-		position.y = player.getPosition().y + verticalDistance+10;
+		position.y = player.getPosition().y + verticalDistance + 10;
 	}
 	
-	private float calculateHorizontalDistance() {
+	private float calculateHorizontalDistance(){
 		return (float) (distanceFromPlayer * Math.cos(Math.toRadians(pitch)));
 	}
 
-	private float calculateVerticalDistance()  {
+	private float calculateVerticalDistance(){
 		return (float) (distanceFromPlayer * Math.sin(Math.toRadians(pitch)));
 	}
 
-	private void calculateZoom() {
+	private void calculateZoom(){
 		float zoomLevel = Mouse.getDWheel() * 0.1f;
 		distanceFromPlayer -= zoomLevel;
 		if (distanceFromPlayer < 5)
 			distanceFromPlayer  = 5;
 	}
 	
-	private void calculatePitch() {
-		if (Mouse.isButtonDown(0))  {
+	private void calculatePitch(){
+		if (Mouse.isButtonDown(0)){
 			float pitchChange = Mouse.getDY() * 0.1f;
 			pitch -= pitchChange;
-			if (pitch < 0) 
-				pitch = 0;
 		}
 	}
 	
-	private void calculateAngleAroundPlayer() {
-		if (Mouse.isButtonDown(0)) {
+	private void calculateAngleAroundPlayer(){
+		if (Mouse.isButtonDown(0)){
 			float angleChange = Mouse.getDX() * 0.3f;
 			angleAroundPlayer -= angleChange;
 		}

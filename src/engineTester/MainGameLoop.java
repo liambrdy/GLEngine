@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import entities.Camera;
@@ -31,10 +31,12 @@ public class MainGameLoop {
 	public static void main(String[] args) {
 		
 		DisplayManager.createDisplay();
-		Loader loader = new Loader();
+		Loader loader = new Loader(); 
 		Random random = new Random();
 		
 		List<Entity> entities = new ArrayList<Entity>();
+		List<GuiTexture> guis = new ArrayList<GuiTexture>(); 
+		List<Light> lights = new ArrayList<Light>();
 		
 		// *********TERRAIN TEXTURE STUFF***********
 		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("textures/grassy3"));
@@ -51,7 +53,7 @@ public class MainGameLoop {
 		ModelData playerData = OBJFileLoader.loadOBJ("player");
 		RawModel playerModel = loader.loadToVAO(playerData.getVertices(), playerData.getTextureCoords(), playerData.getNormals(), playerData.getIndices());
 		ModelTexture playerTexture = new ModelTexture(loader.loadTexture("textures/playerTexture"));
-		Player player = new Player(new TexturedModel(playerModel, playerTexture), new Vector3f(0, 0, 0), 0, 20, 0, 1);
+		Player player = new Player(new TexturedModel(playerModel, playerTexture), new Vector3f(100, terrain1.getHeightOfTerrain(100, 100), 100), 0, 20, 0, 1);
 		
 		ModelData treeData = OBJFileLoader.loadOBJ("lowPolyTree");
 		RawModel treeModel = loader.loadToVAO(treeData.getVertices(), treeData.getTextureCoords(), treeData.getNormals(), treeData.getIndices());
@@ -61,19 +63,28 @@ public class MainGameLoop {
 		float z = 200;
 		Entity tree = new Entity(new TexturedModel(treeModel, treeTextureAtlas), random.nextInt(4), new Vector3f(x, terrain1.getHeightOfTerrain(x, z), z), 0, 0, 0, 2);
 		entities.add(tree);
-		// *****************************************
-
-		Light light = new Light(new Vector3f(20000, 20000, 2000), new Vector3f(1,1,1));		
-		Camera camera = new Camera(player);
 		
-		List<GuiTexture> guis = new ArrayList<GuiTexture>(); 
-		GuiTexture gui = new GuiTexture(loader.loadTexture("guis/health"), new Vector2f(-0.75f, 0.9f), new Vector2f(0.25f, 0.25f));
-		guis.add(gui);
+		ModelData lampData = OBJFileLoader.loadOBJ("lamp");
+		ModelTexture lampTexture = new ModelTexture(loader.loadTexture("textures/lamp"));
+		lampTexture.setHasTransparency(true);
+		lampTexture.setUseFakeLighting(true);
+		TexturedModel lamp = new TexturedModel(loader.loadToVAO(lampData.getVertices(), lampData.getTextureCoords(), lampData.getNormals(), lampData.getIndices()), lampTexture);
+		// *****************************************
+		Camera camera = new Camera(player);
+
+		lights.add(new Light(new Vector3f(0, 1000, -7000), new Vector3f(0.4f,0.4f,0.4f)));	
+		lights.add(new Light(new Vector3f(203, 23.5f, 176), new Vector3f(0, 1, 0), new Vector3f(1, 0.01f, 0.002f)));
+		
+		x = 203; z = 176;
+		System.out.println(terrain1.getHeightOfTerrain(x, z));
+		entities.add(new Entity(lamp, new Vector3f(x, terrain1.getHeightOfTerrain(x, z), z), 0, 0, 0, 1));
 		
 		GuiRenderer guiRenderer = new GuiRenderer(loader);
-		
-		MasterRenderer renderer = new MasterRenderer();
+		MasterRenderer renderer = new MasterRenderer(loader);
 		while(!Display.isCloseRequested()) {
+			if (Keyboard.isKeyDown(Keyboard.KEY_RETURN)) {
+				System.out.println(player.getPosition());
+			}
 			player.move(terrain1);
 			camera.move();
 			renderer.processEntity(player);
@@ -82,7 +93,7 @@ public class MainGameLoop {
 			for (Entity entity : entities)
 				renderer.processEntity(entity);
 			
-			renderer.render(light, camera);
+			renderer.render(lights, camera);
 			guiRenderer.render(guis);
 			DisplayManager.updateDisplay();
 		}

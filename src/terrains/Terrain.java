@@ -19,14 +19,15 @@ public class Terrain {
 
 	private static final float SIZE = 800;
 	private static final float MAX_HEIGHT = 40;
-	private static final float MAX_PIXEL_COLOR =  256 * 256 *256;
+	private static final float MIN_HEIGHT = -40;
+	private static final float MAX_PIXEL_COLOUR =  256 * 256 *256;
 	
 	
 	private float x;
 	private float z;
 	
 	private RawModel model;
-	private TerrainTexturePack texturePack;
+	private TerrainTexturePack texturePack; 
 	private TerrainTexture blendMap;
 	
 	private float[][] heights;
@@ -59,7 +60,7 @@ public class Terrain {
 		return blendMap;
 	}
 	
-	public float getHeightOfTerrain(float worldX, float worldZ) {
+	public float getHeightOfTerrain(float worldX, float worldZ){
 		float terrainX = worldX - this.x;
 		float terrainZ = worldZ - this.z;
 		float gridSquareSize = SIZE / ((float)heights.length - 1);
@@ -89,7 +90,7 @@ public class Terrain {
 			e.printStackTrace();
 		}
 
-		int VERTEX_COUNT = image.getHeight();			
+		int VERTEX_COUNT = image.getHeight();			// this is the number of vertices along the size of the terrain
 		heights = new float[VERTEX_COUNT][VERTEX_COUNT];
 		int count = VERTEX_COUNT * VERTEX_COUNT;
 		float[] vertices = new float[count * 3];
@@ -114,8 +115,8 @@ public class Terrain {
 			}
 		}
 		int pointer = 0;
-		for(int gz=0;gz<VERTEX_COUNT-1;gz++) {
-			for(int gx=0;gx<VERTEX_COUNT-1;gx++) {
+		for(int gz=0;gz<VERTEX_COUNT-1;gz++){
+			for(int gx=0;gx<VERTEX_COUNT-1;gx++){
 				int topLeft = (gz*VERTEX_COUNT)+gx;
 				int topRight = topLeft + 1;
 				int bottomLeft = ((gz+1)*VERTEX_COUNT)+gx;
@@ -131,7 +132,7 @@ public class Terrain {
 		return loader.loadToVAO(vertices, textureCoords, normals, indices);
 	}
 	
-	private Vector3f calculateNormal(int x, int z, BufferedImage image)  {
+	private Vector3f calculateNormal(int x, int z, BufferedImage image){
 		float heightL = getHeight(x-1, z, image);
 		float heightR = getHeight(x+1, z, image);
 		float heightD = getHeight(x, z-1, image);
@@ -143,15 +144,15 @@ public class Terrain {
 		
 	}
 	
-	private float getHeight(int x, int z, BufferedImage image)  {
+	private float getHeight(int x, int z, BufferedImage image){
 		
-		if (x<0 || x>=image.getHeight() || z<0 || z>=image.getHeight()) {
+		if (x<0 || x>=image.getHeight() || z<0 || z>=image.getHeight()){
 			return 0;
 		}
 		float height = image.getRGB(x,z);
 		
-		height += MAX_PIXEL_COLOR/2f;
-		height /= MAX_PIXEL_COLOR/2f;
+		height += MAX_PIXEL_COLOUR/2f;
+		height /= MAX_PIXEL_COLOUR/2f;
 		height *= MAX_HEIGHT;
 		return height;
 	}
