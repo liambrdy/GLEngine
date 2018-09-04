@@ -25,6 +25,7 @@ import terrains.Terrain;
 import textures.ModelTexture;
 import textures.TerrainTexture;
 import textures.TerrainTexturePack;
+import toolbox.MousePicker;
 
 public class MainGameLoop {
 
@@ -69,24 +70,35 @@ public class MainGameLoop {
 		lampTexture.setHasTransparency(true);
 		lampTexture.setUseFakeLighting(true);
 		TexturedModel lamp = new TexturedModel(loader.loadToVAO(lampData.getVertices(), lampData.getTextureCoords(), lampData.getNormals(), lampData.getIndices()), lampTexture);
+		Entity lampEntity = new Entity(lamp, new Vector3f(0, 0, 0), 0, 0, 0, 1);
+		entities.add(lampEntity);
 		// *****************************************
 		Camera camera = new Camera(player);
 
+		Light lampLight = new Light(new Vector3f(0, 0, 0), new Vector3f(0, 1, 0), new Vector3f(1, 0.01f, 0.002f));
+		lights.add(lampLight);
 		lights.add(new Light(new Vector3f(0, 1000, -7000), new Vector3f(0.4f,0.4f,0.4f)));	
-		lights.add(new Light(new Vector3f(203, 23.5f, 176), new Vector3f(0, 1, 0), new Vector3f(1, 0.01f, 0.002f)));
+		lights.add(new Light(new Vector3f(203, 32, 176), new Vector3f(0, 1, 0), new Vector3f(1, 0.01f, 0.002f)));
 		
 		x = 203; z = 176;
 		System.out.println(terrain1.getHeightOfTerrain(x, z));
-		entities.add(new Entity(lamp, new Vector3f(x, terrain1.getHeightOfTerrain(x, z), z), 0, 0, 0, 1));
+		entities.add(new Entity(lamp, new Vector3f(x, terrain1.getHeightOfTerrain(x, z), z), 0, 0, 0, 1.5f));
 		
 		GuiRenderer guiRenderer = new GuiRenderer(loader);
 		MasterRenderer renderer = new MasterRenderer(loader);
+		
+		MousePicker picker = new MousePicker(camera, renderer.getProjectionMatrix(), terrain1);
 		while(!Display.isCloseRequested()) {
-			if (Keyboard.isKeyDown(Keyboard.KEY_RETURN)) {
-				System.out.println(player.getPosition());
-			}
 			player.move(terrain1);
 			camera.move();
+			
+			picker.update();
+			Vector3f terrainPoint = picker.getCurrentTerrainPoint();
+			if (terrainPoint != null) {
+				lampEntity.setPosition(terrainPoint);
+				lampLight.setPosition(new Vector3f(terrainPoint.x, terrainPoint.y + 15, terrainPoint.z));
+			}
+			
 			renderer.processEntity(player);
 			renderer.processTerrain(terrain1);
 			
