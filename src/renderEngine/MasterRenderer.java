@@ -7,8 +7,6 @@ import java.util.Map;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL21;
 import org.lwjgl.util.vector.Matrix4f;
 
 import entities.Camera;
@@ -64,6 +62,14 @@ public class MasterRenderer {
 	public Matrix4f getProjectionMatrix() {
 		return projectionMatrix;
 	}
+	
+	public void renderScene(List<Entity> entities, List<Terrain> terrains, List<Light> lights, Camera camera) {
+		for (Terrain terrain : terrains)
+			processTerrain(terrain);
+		for (Entity entity : entities)
+			processEntity(entity);
+		render(lights, camera);
+}
 	
 	public void render(List<Light> lights, Camera camera) {
 		prepare();
