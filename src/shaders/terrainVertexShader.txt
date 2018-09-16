@@ -15,13 +15,17 @@ uniform mat4 projectionMatrix;		// where the default location of everything is
 uniform mat4 viewMatrix;			// camera's perspective
 uniform vec3 lightPosition[4];			// location of the light source (only one source of light so far)
 
-const float density = 0.002;
-const float gradient = 5.0;
+const float density = 0.0001;
+const float gradient = 10.0;
+
+uniform vec4 plane;
 
 void main(void){
 
 	vec4 worldPosition = transformationMatrix * vec4(position,1.0); // position is the position of the current vertex
 	vec4 positionRelativeToCam = viewMatrix * worldPosition;
+	
+	gl_ClipDistance[0] = dot(worldPosition, plane);
 	
 	gl_Position = projectionMatrix * positionRelativeToCam;  	// NOTE: viewMatrix must go in between the projectionMatrix and transformationMatrix
 	pass_textureCoordinates = textureCoordinates;

@@ -7,7 +7,9 @@ import java.util.Map;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector4f;
 
 import entities.Camera;
 import entities.Entity;
@@ -23,9 +25,9 @@ public class MasterRenderer {
 	private static final float NEAR_PLANE = 0.1f;
 	private static final float FAR_PLANE = 10000;
 	
-	private static final float RED = 0.5444f;
-	private static final float GREEN = 0.62f;
-	private static final float BLUE = 0.69f;
+	private static final float RED = 0.8f;
+	private static final float GREEN = 0.8f;
+	private static final float BLUE = 0.8f;
 
 	private Matrix4f projectionMatrix;
 	
@@ -63,18 +65,19 @@ public class MasterRenderer {
 		return projectionMatrix;
 	}
 	
-	public void renderScene(List<Entity> entities, List<Terrain> terrains, List<Light> lights, Camera camera) {
+	public void renderScene(List<Entity> entities, List<Terrain> terrains, List<Light> lights, Camera camera, Vector4f clipPlane) {
 		for (Terrain terrain : terrains)
 			processTerrain(terrain);
 		for (Entity entity : entities)
 			processEntity(entity);
-		render(lights, camera);
+		render(lights, camera, clipPlane);
 }
 	
-	public void render(List<Light> lights, Camera camera) {
+	public void render(List<Light> lights, Camera camera, Vector4f clipPlane) {
 		prepare();
 
 		shader.start();
+		shader.loadClipPlane(clipPlane);
 		shader.loadSkyColor(RED, GREEN, BLUE);
 		shader.loadLights(lights);
 		shader.loadViewMatrix(camera);
@@ -82,12 +85,14 @@ public class MasterRenderer {
 		shader.stop();
 		
 		terrainShader.start();
+		terrainShader.loadClipPlane(clipPlane);
 		terrainShader.loadSkyColor(RED, GREEN, BLUE);
 		terrainShader.loadLights(lights);
 		terrainShader.loadViewMatrix(camera);
 		terrainRenderer.render(terrains);
 		terrainShader.stop();
 		
+		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 		GL11.glDepthRange(0.9999, 1);
 		skyboxRenderer.render(camera, RED, GREEN, BLUE);
 		GL11.glDepthRange(0, 1);
