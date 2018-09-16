@@ -18,6 +18,10 @@ public class Camera {
 	public Camera(Player player) {
 		this.player = player;
 	}
+	
+	public Camera() {
+		
+	}
 
 	public void move(){
 		calculateZoom();
@@ -27,8 +31,13 @@ public class Camera {
 		float verticalDistance = calculateVerticalDistance();
 		calculateCameraPosition(horizontalDistance, verticalDistance);
 		this.yaw = 180 - (player.getRotY() + angleAroundPlayer);
+		
 	}
 
+	public void invertPitch() {
+		pitch = -pitch;
+	}
+	
 	public Vector3f getPosition() {
 		return position;
 	}
@@ -65,8 +74,6 @@ public class Camera {
 	private void calculateZoom(){
 		float zoomLevel = Mouse.getDWheel() * 0.1f;
 		distanceFromPlayer -= zoomLevel;
-		if (distanceFromPlayer < 5)
-			distanceFromPlayer  = 5;
 	}
 	
 	private void calculatePitch(){

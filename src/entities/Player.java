@@ -41,7 +41,7 @@ public class Player extends Entity {
 			isAirborn = false;
 		}
 		
-		//System.out.println(getPosition().x + "," + getPosition().y + "," + getPosition().z);  
+		System.out.println(getPosition().x + "," + getPosition().y + "," + getPosition().z);  
 		
 	}
 	
