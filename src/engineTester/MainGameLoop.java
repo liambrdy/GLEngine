@@ -6,7 +6,6 @@ import java.util.List;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
@@ -23,6 +22,7 @@ import objConverter.OBJFileLoader;
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
 import renderEngine.MasterRenderer;
+import scenes.WaterScene;
 import terrains.Terrain;
 import textures.ModelTexture;
 import textures.TerrainTexture;
@@ -39,80 +39,45 @@ public class MainGameLoop {
 		DisplayManager.createDisplay();
 		Loader loader = new Loader(); 
 		
+		MasterRenderer renderer = new MasterRenderer(loader);
+		WaterScene scene = new WaterScene(loader, renderer);
+		GuiRenderer guiRenderer = scene.getGuiRenderer();
+		
 		List<Entity> entities = new ArrayList<Entity>();
 		List<Terrain> terrains = new ArrayList<Terrain>();
 		List<GuiTexture> guis = new ArrayList<GuiTexture>(); 
 		List<Light> lights = new ArrayList<Light>();
 		List<WaterTile> waters = new ArrayList<WaterTile>();
 		
-		// *********TERRAIN TEXTURE STUFF***********
-		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("textures/grassy2"));
-		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("textures/mud"));
-		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("textures/grass"));
-		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("textures/grassy2"));
-
-		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
-		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMaps/lakeBlendMap"));
-		Terrain terrain = new Terrain(0,0,loader, texturePack, blendMap, "heightMaps/lakeHeightMap.jpg");
-		terrains.add(terrain);
-		// *****************************************
+		terrains = scene.getTerrains();
+		entities = scene.getEntities();
+		lights = scene.getLights();
+		waters = scene.getWaters();
 		
-		// *********MODEL LOADING STUFF ************
-		ModelData playerData = OBJFileLoader.loadOBJ("player");
-		RawModel playerModel = loader.loadToVAO(playerData.getVertices(), playerData.getTextureCoords(), playerData.getNormals(), playerData.getIndices());
-		ModelTexture playerTexture = new ModelTexture(loader.loadTexture("textures/playerTexture"));
-		Player player = new Player(new TexturedModel(playerModel, playerTexture), new Vector3f(390.8f, terrain.getHeightOfTerrain(390, 370), 379.2f), 0, 180, 0, 1);
-		entities.add(new Entity(new TexturedModel(playerModel, playerTexture), new Vector3f(200, 50, 200), 0, 0, 0, 2));
-		// *****************************************
+		Terrain terrain = terrains.get(0);
+		Player player = scene.getPlayer();
 		
-		// ************ ENTITIES *******************
-		Camera camera = new Camera(player);
-		Light sun = new Light(new Vector3f(400, 400, 400), new Vector3f(1f,1f,1f));
-		lights.add(sun);
-		// *****************************************
+		Camera camera = scene.getCamera();
+		Light sun = lights.get(0);
 		
-		// ************* RENDERERS *****************
-		MasterRenderer renderer = new MasterRenderer(loader);
-		GuiRenderer guiRenderer = new GuiRenderer(loader);
-		// *****************************************
-		
-		// ************* WATER STUFF ***************
-		WaterShader waterShader = new WaterShader();
-		WaterFrameBuffers fbos = new WaterFrameBuffers();
-		WaterRenderer waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix(), fbos);
-		WaterTile water = new WaterTile(350, 400, 400, -5);
-		waters.add(water);
-		// *****************************************
+		WaterTile water = waters.get(0);
 		
 		// ************** MAIN LOOP ****************
 		while(!Display.isCloseRequested()) {
-			camera.move();			
+			camera.move();	
+			player.move(terrain);
 			
 			GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
-			
-			fbos.bindReflectionFrameBuffer();
-			float distance = 2 * (camera.getPosition().y - water.getHeight());
-			camera.getPosition().y -= distance;
-			camera.invertPitch();
-			renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, 1, 0, -water.getHeight()+1f));
-			camera.getPosition().y += distance;
-			camera.invertPitch();
-
-			fbos.bindRefractionFrameBuffer();
-			renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, -1, 0, water.getHeight()));
-			
+			scene.renderFbos();
 			GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
-			fbos.unbindCurrentFrameBuffer();
+			
+			scene.getFbos().unbindCurrentFrameBuffer();
 			renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, -1, 0, 10000000));
-			waterRenderer.render(waters, camera, sun);
+			scene.getWaterRenderer().render(waters, camera, sun);
 			guiRenderer.render(guis);
 			DisplayManager.updateDisplay();
 		}
-		fbos.cleanUp();
-		waterShader.cleanUp();
-		guiRenderer.cleanUp();
-		renderer.cleanUp();
-		loader.cleanUp();
+		scene.cleanUp();
 		
 		DisplayManager.closeDisplay();
 	}
