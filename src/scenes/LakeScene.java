@@ -27,13 +27,14 @@ import water.WaterRenderer;
 import water.WaterShader;
 import water.WaterTile;
 
-public class WaterScene {
+public class LakeScene {
 		
 	List<Entity> entities = new ArrayList<Entity>();
 	List<Terrain> terrains = new ArrayList<Terrain>();
 	List<GuiTexture> guis = new ArrayList<GuiTexture>(); 
 	List<Light> lights = new ArrayList<Light>();
 	List<WaterTile> waters = new ArrayList<WaterTile>();
+	List<Entity> normalMapEntities = new ArrayList<Entity>();
 	
 	private Player player;
 	private Camera camera;
@@ -49,7 +50,7 @@ public class WaterScene {
 	private WaterShader waterShader;
 	private WaterTile water;
 	
-	public WaterScene(Loader loader, MasterRenderer renderer) {
+	public LakeScene(Loader loader, MasterRenderer renderer) {
 		// *********TERRAIN TEXTURE STUFF***********
 		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("textures/grassy2"));
 		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("textures/mud"));
@@ -96,12 +97,12 @@ public class WaterScene {
 		float distance = 2 * (camera.getPosition().y - water.getHeight());
 		camera.getPosition().y -= distance;
 		camera.invertPitch();
-		renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, 1, 0, -water.getHeight()+1f));
+		renderer.renderScene(entities, normalMapEntities, terrains, lights, camera, new Vector4f(0, 1, 0, -water.getHeight()+1f));
 		camera.getPosition().y += distance;
 		camera.invertPitch();
 
 		fbos.bindRefractionFrameBuffer();
-		renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, -1, 0, water.getHeight()));
+		renderer.renderScene(entities, normalMapEntities, terrains, lights, camera, new Vector4f(0, -1, 0, water.getHeight()));
 	}
 	
 	public void cleanUp() {
