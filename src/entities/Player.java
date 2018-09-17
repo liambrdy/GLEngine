@@ -39,10 +39,7 @@ public class Player extends Entity {
 			upwardsSpeed = 0;
 			super.getPosition().y = terrainHeight;
 			isAirborn = false;
-		}
-		
-		System.out.println(getPosition().x + "," + getPosition().y + "," + getPosition().z);  
-		
+		}		
 	}
 	
 	private void jump()

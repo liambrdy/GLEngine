@@ -17,7 +17,7 @@ import toolbox.Maths;
 
 public class Terrain {
 
-	private static final float SIZE = 800;
+	private static final float SIZE = 150;
 	private static final float MAX_HEIGHT = 40;
 	private static final float MAX_PIXEL_COLOUR =  256 * 256 *256;
 	
@@ -84,7 +84,7 @@ public class Terrain {
 		BufferedImage image = null;
 
 		try {
-			image = ImageIO.read(new File("res/" + heightMap));
+			image = ImageIO.read(new File("res/heightMaps/" + heightMap));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -6,7 +6,6 @@ import java.util.List;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import entities.Camera;
@@ -15,21 +14,12 @@ import entities.Light;
 import entities.Player;
 import guis.GuiRenderer;
 import guis.GuiTexture;
-import models.RawModel;
-import models.TexturedModel;
-import objConverter.ModelData;
-import objConverter.OBJFileLoader;
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
 import renderEngine.MasterRenderer;
-import scenes.WaterScene;
+import scenes.IslandScene;
+import scenes.LakeScene;
 import terrains.Terrain;
-import textures.ModelTexture;
-import textures.TerrainTexture;
-import textures.TerrainTexturePack;
-import water.WaterFrameBuffers;
-import water.WaterRenderer;
-import water.WaterShader;
 import water.WaterTile;
 
 public class MainGameLoop {
@@ -40,7 +30,7 @@ public class MainGameLoop {
 		Loader loader = new Loader(); 
 		
 		MasterRenderer renderer = new MasterRenderer(loader);
-		WaterScene scene = new WaterScene(loader, renderer);
+		IslandScene scene = new IslandScene(loader, renderer);
 		GuiRenderer guiRenderer = scene.getGuiRenderer();
 		
 		List<Entity> entities = new ArrayList<Entity>();
@@ -59,9 +49,7 @@ public class MainGameLoop {
 		
 		Camera camera = scene.getCamera();
 		Light sun = lights.get(0);
-		
-		WaterTile water = waters.get(0);
-		
+				
 		// ************** MAIN LOOP ****************
 		while(!Display.isCloseRequested()) {
 			camera.move();	
@@ -71,8 +59,7 @@ public class MainGameLoop {
 			scene.renderFbos();
 			GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 			
-			scene.getFbos().unbindCurrentFrameBuffer();
-			renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, -1, 0, 10000000));
+			renderer.renderScene(entities, scene.getNormalMapEntities(), terrains, lights, camera, new Vector4f(0, -1, 0, 10000000));
 			scene.getWaterRenderer().render(waters, camera, sun);
 			guiRenderer.render(guis);
 			DisplayManager.updateDisplay();
