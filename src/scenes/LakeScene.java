@@ -52,21 +52,20 @@ public class LakeScene {
 	
 	public LakeScene(Loader loader, MasterRenderer renderer) {
 		// *********TERRAIN TEXTURE STUFF***********
-		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("textures/grassy2"));
-		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("textures/mud"));
-		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("textures/grass"));
-		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("textures/grassy2"));
+		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("textures/grassy2", -0.4f));
+		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("textures/mud", -0.4f));
+		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("textures/grass", -0.4f));
+		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("textures/grassy2", -0.4f));
 		
 		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
-		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMaps/lakeBlendMap"));
+		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMaps/lakeBlendMap", -0.4f));
 		Terrain terrain = new Terrain(0,0,loader, texturePack, blendMap, "heightMaps/lakeHeightMap.jpg");
 		terrains.add(terrain);
 		// *****************************************
 		
 		// *********MODEL LOADING STUFF ************
-		ModelData playerData = OBJFileLoader.loadOBJ("player");
-		RawModel playerModel = loader.loadToVAO(playerData.getVertices(), playerData.getTextureCoords(), playerData.getNormals(), playerData.getIndices());
-		ModelTexture playerTexture = new ModelTexture(loader.loadTexture("textures/playerTexture"));
+		RawModel playerModel = OBJFileLoader.loadOBJ("player", loader);
+		ModelTexture playerTexture = new ModelTexture(loader.loadTexture("textures/playerTexture", -0.4f));
 		player = new Player(new TexturedModel(playerModel, playerTexture), new Vector3f(390.8f, terrain.getHeightOfTerrain(390, 370), 379.2f), 0, 180, 0, 1);
 		entities.add(player);
 		entities.add(new Entity(new TexturedModel(playerModel, playerTexture), new Vector3f(200, 50, 200), 0, 0, 0, 2));

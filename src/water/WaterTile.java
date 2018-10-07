@@ -7,14 +7,14 @@ public class WaterTile {
 	private float x,z;
 	
 	public WaterTile(int size, float centerX, float centerZ, float height){
-		this.size = size;
 		this.x = centerX;
 		this.z = centerZ;
 		this.height = height;
+		this.size = size;
 	}
 
 	public int getSize() {
-		return this.size;
+		return size;
 	}
 	
 	public float getHeight() {

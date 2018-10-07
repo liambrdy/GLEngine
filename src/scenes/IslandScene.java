@@ -54,55 +54,55 @@ public class IslandScene {
 	public IslandScene(Loader loader, MasterRenderer renderer) {
 				
 		// *********TERRAIN TEXTURE STUFF**********
-        TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("textures/grassy2"));
-        TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("textures/mud"));
-        TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("textures/grassFlowers"));
-        TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("textures/path"));
+        TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("textures/grassy2", -0.4f));
+        TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("textures/mud", -0.4f));
+        TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("textures/grassFlowers", -0.4f));
+        TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("textures/path", -0.4f));
  
         TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture,
                 gTexture, bTexture);
-        TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMaps/blendMap"));
+        TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMaps/blendMap", -0.4f));
         
         // *****************************************
  
         TexturedModel rocks = new TexturedModel(OBJFileLoader.loadOBJ("rocks", loader),
-                new ModelTexture(loader.loadTexture("textures/rocks")));
+                new ModelTexture(loader.loadTexture("textures/rocks", -0.4f)));
  
-        ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture("textures/fern"));
+        ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture("textures/fern", -0.4f));
         fernTextureAtlas.setNumberOfRows(2);
  
         TexturedModel fern = new TexturedModel(OBJFileLoader.loadOBJ("fern", loader),
                 fernTextureAtlas);
  
         TexturedModel bobble = new TexturedModel(OBJFileLoader.loadOBJ("pine", loader),
-                new ModelTexture(loader.loadTexture("textures/pine")));
+                new ModelTexture(loader.loadTexture("textures/pine", -0.4f)));
         bobble.getTexture().setHasTransparency(true);
  
         fern.getTexture().setHasTransparency(true);
  
-        Terrain terrain = new Terrain(0, -1, loader, texturePack, blendMap, "heightmap.png");
+        Terrain terrain = new Terrain(0, -1, loader, texturePack, blendMap, "heightmap");
         terrains.add(terrain);
  
         TexturedModel lamp = new TexturedModel(OBJFileLoader.loadOBJ("lamp", loader),
-                new ModelTexture(loader.loadTexture("textures/lamp")));
+                new ModelTexture(loader.loadTexture("textures/lamp", -0.4f)));
         lamp.getTexture().setUseFakeLighting(true);         
         //******************NORMAL MAP MODELS************************
          
         TexturedModel barrelModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("barrel", loader),
-                new ModelTexture(loader.loadTexture("textures/barrel")));
-        barrelModel.getTexture().setNormalMap(loader.loadTexture("normal/barrelNormal"));
+                new ModelTexture(loader.loadTexture("textures/barrel", -0.4f)));
+        barrelModel.getTexture().setNormalMap(loader.loadTexture("normal/barrelNormal", -0.4f));
         barrelModel.getTexture().setShineDamper(10);
         barrelModel.getTexture().setReflectivity(0.5f);
          
         TexturedModel crateModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("crate", loader),
-                new ModelTexture(loader.loadTexture("textures/crate")));
-        crateModel.getTexture().setNormalMap(loader.loadTexture("normal/crateNormal"));
+                new ModelTexture(loader.loadTexture("textures/crate", -0.4f)));
+        crateModel.getTexture().setNormalMap(loader.loadTexture("normal/crateNormal", -0.4f));
         crateModel.getTexture().setShineDamper(10);
         crateModel.getTexture().setReflectivity(0.5f);
          
         TexturedModel boulderModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("boulder", loader),
-                new ModelTexture(loader.loadTexture("textures/boulder")));
-        boulderModel.getTexture().setNormalMap(loader.loadTexture("normal/boulderNormal"));
+                new ModelTexture(loader.loadTexture("textures/boulder", -0.4f)));
+        boulderModel.getTexture().setNormalMap(loader.loadTexture("normal/boulderNormal", -0.4f));
         boulderModel.getTexture().setShineDamper(10);
         boulderModel.getTexture().setReflectivity(0.5f);
          
@@ -151,7 +151,7 @@ public class IslandScene {
   
         RawModel bunnyModel = OBJFileLoader.loadOBJ("person", loader);
         TexturedModel stanfordBunny = new TexturedModel(bunnyModel, new ModelTexture(
-                loader.loadTexture("textures/playerTexture")));
+                loader.loadTexture("textures/playerTexture", -0.4f)));
  
         player = new Player(stanfordBunny, new Vector3f(75, 5, -75), 0, 100, 0, 0.6f);
         entities.add(player);

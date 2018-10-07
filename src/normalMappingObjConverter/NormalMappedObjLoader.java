@@ -66,7 +66,7 @@ public class NormalMappedObjLoader {
 				VertexNM v0 = processVertex(vertex1, vertices, indices);
 				VertexNM v1 = processVertex(vertex2, vertices, indices);
 				VertexNM v2 = processVertex(vertex3, vertices, indices);
-				calculateTangents(v0, v1, v2, textures);//NEW
+				calculateTangents(v0, v1, v2, textures);
 				line = reader.readLine();
 			}
 			reader.close();
@@ -85,7 +85,6 @@ public class NormalMappedObjLoader {
 		return loader.loadToVAO(verticesArray, texturesArray, normalsArray, tangentsArray, indicesArray);
 	}
 
-	//NEW 
 	private static void calculateTangents(VertexNM v0, VertexNM v1, VertexNM v2,
 			List<Vector2f> textures) {
 		Vector3f delatPos1 = Vector3f.sub(v1.getPosition(), v0.getPosition(), null);
@@ -171,7 +170,7 @@ public class NormalMappedObjLoader {
 				return dealWithAlreadyProcessedVertex(anotherVertex, newTextureIndex,
 						newNormalIndex, indices, vertices);
 			} else {
-				VertexNM duplicateVertex = previousVertex.duplicate(vertices.size());//NEW
+				VertexNM duplicateVertex = new VertexNM(vertices.size(), previousVertex.getPosition());
 				duplicateVertex.setTextureIndex(newTextureIndex);
 				duplicateVertex.setNormalIndex(newNormalIndex);
 				previousVertex.setDuplicateVertex(duplicateVertex);
@@ -179,6 +178,7 @@ public class NormalMappedObjLoader {
 				indices.add(duplicateVertex.getIndex());
 				return duplicateVertex;
 			}
+
 		}
 	}
 

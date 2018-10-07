@@ -1,4 +1,4 @@
-#version 400 core
+#version 140
 
 in vec3 position;
 in vec2 textureCoordinates;
@@ -42,7 +42,7 @@ void main(void){
 	mat3 toTangentSpace = mat3(
 		tang.x, bitang.x, norm.x,
 		tang.y, bitang.y, norm.y,
-		tang.z, bitang.z, norm.z	
+		tang.z, bitang.z, norm.z
 	);
 	
 	for(int i=0;i<4;i++){

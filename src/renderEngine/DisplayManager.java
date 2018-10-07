@@ -6,40 +6,38 @@ import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.PixelFormat;
 
-
 public class DisplayManager {
-
+	
 	private static final int WIDTH = 1280;
 	private static final int HEIGHT = 720;
-	private static final int FPS_CAP = 120; 
+	private static final int FPS_CAP = 60;
 	
-	private static final String TITLE = "OpenGL Game Engine";
-
 	private static long lastFrameTime;
 	private static float delta;
 	
-	public static void createDisplay(){
-		
-		ContextAttribs attribs = new ContextAttribs(3,2) /* version of opengl to use */
+	public static void createDisplay(){		
+		ContextAttribs attribs = new ContextAttribs(3,2)
 		.withForwardCompatible(true)
 		.withProfileCore(true);
 		
-		try {	
+		try {
 			Display.setDisplayMode(new DisplayMode(WIDTH,HEIGHT));
 			Display.create(new PixelFormat(), attribs);
-			Display.setTitle(TITLE);
-		} catch (LWJGLException e){
+			Display.setTitle("Our First Display!");
+			GL11.glEnable(GL13.GL_MULTISAMPLE);
+		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}
 		
-		GL11.glViewport(0, 0, WIDTH, HEIGHT);
+		GL11.glViewport(0,0, WIDTH, HEIGHT);
 		lastFrameTime = getCurrentTime();
 	}
-		
+	
 	public static void updateDisplay(){
-		Display.sync( FPS_CAP );
+		Display.sync(FPS_CAP);
 		Display.update();
 		long currentFrameTime = getCurrentTime();
 		delta = (currentFrameTime - lastFrameTime)/1000f;
@@ -54,7 +52,11 @@ public class DisplayManager {
 		Display.destroy();
 	}
 	
-	private static long getCurrentTime() {
+	private static long getCurrentTime(){
 		return Sys.getTime()*1000/Sys.getTimerResolution();
 	}
+	
+	
+	
+
 }
