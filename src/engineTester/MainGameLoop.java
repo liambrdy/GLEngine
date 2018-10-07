@@ -34,7 +34,7 @@ public class MainGameLoop {
 		Loader loader = new Loader(); 
 		TextMaster.init(loader);
         
-        FontType font = new FontType(loader.loadTexture("fonts/firacode", -0.4f), new File("res/fonts/firacode.fnt"));
+        FontType font = new FontType(loader.loadTexture("fonts/distance-candara", -0.4f), new File("res/fonts/distance-candara.fnt"));
         GUIText text = new GUIText("This is some text!", 3f, font, new Vector2f(0, 0), 1f, true);
         text.setColor(1, 0, 0);
 		
