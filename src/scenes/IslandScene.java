@@ -1,9 +1,13 @@
 package scenes;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
@@ -11,12 +15,16 @@ import entities.Camera;
 import entities.Entity;
 import entities.Light;
 import entities.Player;
+import fontMeshCreator.FontType;
+import fontMeshCreator.GUIText;
+import fontRendering.TextMaster;
 import guis.GuiRenderer;
 import guis.GuiTexture;
 import models.RawModel;
 import models.TexturedModel;
 import normalMappingObjConverter.NormalMappedObjLoader;
 import objConverter.OBJFileLoader;
+import renderEngine.DisplayManager;
 import renderEngine.Loader;
 import renderEngine.MasterRenderer;
 import terrains.Terrain;
@@ -28,14 +36,15 @@ import water.WaterRenderer;
 import water.WaterShader;
 import water.WaterTile;
 
-public class IslandScene {
-		
-	List<Entity> entities = new ArrayList<Entity>();
-	List<Terrain> terrains = new ArrayList<Terrain>();
-	List<GuiTexture> guis = new ArrayList<GuiTexture>(); 
-	List<Light> lights = new ArrayList<Light>();
-	List<WaterTile> waters = new ArrayList<WaterTile>();
-	List<Entity> normalMapEntities = new ArrayList<Entity>();
+public class IslandScene implements Scene {
+	
+	
+	List<Entity> entities;
+	List<Terrain> terrains;
+	List<GuiTexture> guis;
+	List<Light> lights;
+	List<WaterTile> waters;
+	List<Entity> normalMapEntities;
 	
 	private Player player;
 	private Camera camera;
@@ -51,8 +60,20 @@ public class IslandScene {
 	private WaterShader waterShader;
 	private WaterTile water;
 	
-	public IslandScene(Loader loader, MasterRenderer renderer) {
+	@Override
+	public void init(Loader loader, MasterRenderer renderer) {	
+		entities = new ArrayList<Entity>();
+		terrains = new ArrayList<Terrain>();
+		guis = new ArrayList<GuiTexture>(); 
+		lights = new ArrayList<Light>();
+		waters = new ArrayList<WaterTile>();
+		normalMapEntities = new ArrayList<Entity>();
 				
+		TextMaster.init(loader);
+		FontType font = new FontType(loader.loadTexture("fonts/distance-candara", -0.4f), new File("res/fonts/distance-candara.fnt"));
+        GUIText text = new GUIText("This is text!", 3f, font, new Vector2f(0, 0), 1f, true);
+        text.setColor(1, 0, 0);
+		
 		// *********TERRAIN TEXTURE STUFF**********
         TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("textures/grassy2", -0.4f));
         TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("textures/mud", -0.4f));
@@ -64,7 +85,8 @@ public class IslandScene {
         TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMaps/blendMap", -0.4f));
         
         // *****************************************
- 
+        
+        // ***************** LOADING MODELS **********
         TexturedModel rocks = new TexturedModel(OBJFileLoader.loadOBJ("rocks", loader),
                 new ModelTexture(loader.loadTexture("textures/rocks", -0.4f)));
  
@@ -85,9 +107,11 @@ public class IslandScene {
  
         TexturedModel lamp = new TexturedModel(OBJFileLoader.loadOBJ("lamp", loader),
                 new ModelTexture(loader.loadTexture("textures/lamp", -0.4f)));
-        lamp.getTexture().setUseFakeLighting(true);         
-        //******************NORMAL MAP MODELS************************
-         
+        lamp.getTexture().setUseFakeLighting(true);   
+        // **************************************************
+        
+      //******************NORMAL MAP MODELS************************
+        
         TexturedModel barrelModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("barrel", loader),
                 new ModelTexture(loader.loadTexture("textures/barrel", -0.4f)));
         barrelModel.getTexture().setNormalMap(loader.loadTexture("normal/barrelNormal", -0.4f));
@@ -108,7 +132,6 @@ public class IslandScene {
          
          
         //************ENTITIES*******************
-         
         Entity entity = new Entity(barrelModel, new Vector3f(75, 10, -75), 0, 0, 0, 1f);
         Entity entity2 = new Entity(boulderModel, new Vector3f(85, 10, -75), 0, 0, 0, 1f);
         Entity entity3 = new Entity(crateModel, new Vector3f(65, 10, -75), 0, 0, 0, 0.04f);
@@ -143,9 +166,9 @@ public class IslandScene {
             }
         }
         entities.add(new Entity(rocks, new Vector3f(75, 4.6f, -75), 0, 0, 0, 75));
-         
-        //*******************OTHER SETUP***************
- 
+        
+      //*******************OTHER SETUP***************
+        
         Light sun = new Light(new Vector3f(10000, 10000, -10000), new Vector3f(1.3f, 1.3f, 1.3f));
         lights.add(sun);
   
@@ -156,9 +179,10 @@ public class IslandScene {
         player = new Player(stanfordBunny, new Vector3f(75, 5, -75), 0, 100, 0, 0.6f);
         entities.add(player);
         camera = new Camera(player);
-        guiRenderer = new GuiRenderer(loader);     
+        guiRenderer = new GuiRenderer(loader);   
+        
         //**********Water Renderer Set-up************************
-         
+        
         fbos = new WaterFrameBuffers();
         waterShader = new WaterShader();
         waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix(), fbos);
@@ -167,9 +191,42 @@ public class IslandScene {
         
         this.renderer = renderer;
         this.loader = loader;
+
+	}
+
+	@Override
+	public void update() {
+		camera.move();	
+		player.move(terrains.get(0));
+		
+	}
+
+	@Override
+	public void render() {
+		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
+		renderFbos();
+		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
+		
+		renderer.renderScene(entities, normalMapEntities, terrains, lights, camera, new Vector4f(0, -1, 0, 10000000));
+		waterRenderer.render(waters, camera, lights.get(0));
+		guiRenderer.render(guis);
+		TextMaster.render();
+		DisplayManager.updateDisplay();
+		
+	}
+
+	@Override
+	public void cleanup() {
+		TextMaster.cleanUp();
+		fbos.cleanUp();
+		waterShader.cleanUp();
+		guiRenderer.cleanUp();
+		renderer.cleanUp();
+		loader.cleanUp();
+		
 	}
 	
-	public void renderFbos() {
+	private void renderFbos() {
 		fbos.bindReflectionFrameBuffer();
 		float distance = 2 * (camera.getPosition().y - water.getHeight());
 		camera.getPosition().y -= distance;
@@ -184,59 +241,7 @@ public class IslandScene {
 		fbos.unbindCurrentFrameBuffer();
 	}
 	
-	public void cleanUp() {
-		fbos.cleanUp();
-		waterShader.cleanUp();
-		guiRenderer.cleanUp();
-		renderer.cleanUp();
-		loader.cleanUp();
-	}
-	
-	public Player getPlayer() {
-		return player;
-	}
-	
-	public WaterRenderer getWaterRenderer() {
-		return waterRenderer;
-	}
-	
-	public GuiRenderer getGuiRenderer() {
-		return guiRenderer;
-	}
-	
-	public WaterFrameBuffers getFbos() {
-		return fbos;
-	}
-	
-	public WaterShader getWaterShader() {
-		return waterShader;
-	}
-	
-	public Camera getCamera() {
-		return camera;
-	}
-	
-	public List<Light> getLights() {
-		return lights;
-	}
-	
-	public List<Terrain> getTerrains() {
-		return terrains;
-	}
-	
-	public List<Entity> getEntities() {
-		return entities;
-	}
-	
-	public List<GuiTexture> getGuis() {
-		return guis;
-	}
-	
-	public List<WaterTile> getWaters() {
-		return waters;
-	}
-	
-	public List<Entity> getNormalMapEntities() {
-		return normalMapEntities;
+	public IslandScene() {  
+		
 	}
 }
