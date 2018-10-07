@@ -14,7 +14,6 @@ import guis.GuiRenderer;
 import guis.GuiTexture;
 import models.RawModel;
 import models.TexturedModel;
-import objConverter.ModelData;
 import objConverter.OBJFileLoader;
 import renderEngine.Loader;
 import renderEngine.MasterRenderer;

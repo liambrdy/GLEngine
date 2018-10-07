@@ -1,6 +1,6 @@
 package engineTester;
 
-import org.lwjgl.opengl.Display;
+import org.lwjgl.util.Display;
 
 import renderEngine.DisplayManager;
 import renderEngine.Loader;

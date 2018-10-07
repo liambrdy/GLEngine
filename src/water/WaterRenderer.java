@@ -2,8 +2,6 @@ package water;
 
 import java.util.List;
 
-import models.RawModel;
-
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
@@ -11,11 +9,12 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
+import entities.Camera;
+import entities.Light;
+import models.RawModel;
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
 import toolbox.Maths;
-import entities.Camera;
-import entities.Light;
 
 public class WaterRenderer {
 	

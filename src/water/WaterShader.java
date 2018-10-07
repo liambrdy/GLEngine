@@ -2,10 +2,10 @@ package water;
 
 import org.lwjgl.util.vector.Matrix4f;
 
-import shaders.ShaderProgram;
-import toolbox.Maths;
 import entities.Camera;
 import entities.Light;
+import shaders.ShaderProgram;
+import toolbox.Maths;
 
 public class WaterShader extends ShaderProgram {
 

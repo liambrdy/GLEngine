@@ -7,10 +7,10 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import models.RawModel;
-
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+
+import models.RawModel;
 
 public class OBJLoader {
 

@@ -6,11 +6,10 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import models.RawModel;
-
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import models.RawModel;
 import renderEngine.Loader;
 import textures.TerrainTexture;
 import textures.TerrainTexturePack;
