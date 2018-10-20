@@ -1,4 +1,4 @@
-## OpenGLGameEngine
+## OpenGLGameEngine - Java Version
 This game engine is built using OpenGL and java.
 
 ## Dependencies
